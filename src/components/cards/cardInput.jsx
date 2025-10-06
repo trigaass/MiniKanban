@@ -15,68 +15,62 @@ export const CardInput = ({ onAdd }) => {
 
     return (
         <CardContainer>
-            <CardHeader>
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Título..."
-                />
-                <button onClick={handleSave}>Salvar</button>
-            </CardHeader>
-
-            <CardContent>
-                <textarea
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Descrição..."
-                />
-            </CardContent>
+            <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Título..."
+            />
+            <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Descrição..."
+            />
+            <button onClick={handleSave}>Salvar</button>
         </CardContainer>
     );
 };
 
 const CardContainer = styled.div`
-  background: #fff;
+  background: #fafafa;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  padding: 10px;
-  margin: 10px 0;
-  border-left: 6px solid #95a5a6;
-`;
-
-const CardHeader = styled.div`
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+  padding: 12px;
+  margin-bottom: 12px;
+  border-left: 6px solid #3498db;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
 
-  input {
-    flex: 1;
-    font-size: 1rem;
+  input, textarea {
+    width: 100%;
+    font-size: 0.95rem;
     border: none;
     border-bottom: 1px solid #ccc;
-    padding: 5px;
+    padding: 6px;
+    background: transparent;
+    outline: none;
+  }
+
+  textarea {
+    height: 70px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    background: #fff;
   }
 
   button {
-    border: none;
+    align-self: flex-end;
     background: #27ae60;
     color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-left: 10px;
-  }
-`;
+    transition: 0.2s;
 
-const CardContent = styled.div`
-  margin-top: 8px;
-
-  textarea {
-    width: 100%;
-    height: 60px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
+    &:hover {
+      background: #219150;
+    }
   }
 `;

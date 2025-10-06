@@ -8,12 +8,6 @@ export const Column = ({ Title }) => {
   const [cards, setCards] = useState([]);
   const [adding, setAdding] = useState(false);
 
-  const statusMap = {
-    "Pendente": "Pendente",
-    "Em Andamento": "Em Andamento",
-    "Concluído": "Concluído"
-  };
-
   useEffect(() => {
     loadTasks();
   }, [Title]);
@@ -21,91 +15,68 @@ export const Column = ({ Title }) => {
   const loadTasks = async () => {
     try {
       const data = await getTasks();
-      const backendStatus = statusMap[Title] || Title;
-      const filtered = data.filter(
-        (t) => t.status === backendStatus
-      );
+      const filtered = data.filter((t) => t.status === Title);
       setCards(filtered);
     } catch (error) {
       console.error("Erro ao carregar tarefas:", error);
     }
   };
 
-  const handleAdd = async (title, content) => {
-    try {
-      const backendStatus = statusMap[Title] || "Pendente";
-      const created = await createTask(title, content, backendStatus);
-      setCards([...cards, created]);
-      setAdding(false);
-    } catch (error) {
-      console.error("Erro ao criar tarefa:", error);
-      setAdding(false);
-    }
-  };
+const handleAdd = async (title, content) => {
+  try {
+    const created = await createTask(title, content, "Pendente");
+    setCards([...cards, created]);
+    setAdding(false);
+  } catch (error) {
+    console.error("Erro ao criar tarefa:", error);
+  }
+};
+
 
   const handleDelete = async (id) => {
-    try {
-      await deleteTask(id);
-      setCards(cards.filter((c) => c.id !== id));
-    } catch (error) {
-      console.error("Erro ao deletar tarefa:", error);
-    }
+    await deleteTask(id);
+    setCards(cards.filter((c) => c.id !== id));
   };
 
-  const handleStatusChange = async (id) => {
-    try {
-      const card = cards.find((c) => c.id === id);
-      const nextStatus =
-        card.status === "Pendente"
-          ? "Em Andamento"
-          : card.status === "Em Andamento"
-          ? "Concluído"
-          : "Pendente";
+const handleStatusChange = async (id) => {
+  const card = cards.find((c) => c.id === id);
 
-      const updated = await updateTaskStatus(id, nextStatus);
-      // ✅ Atualiza o status do card sem removê-lo
-      setCards(cards.map((c) => 
-        c.id === id 
-          ? { ...c, status: updated.status }
-          : c
-      ));
-    } catch (error) {
-      console.error("Erro ao atualizar status:", error);
-    }
-  };
+  let nextStatus =
+    card.status === "Pendente"
+      ? "Em Andamento"
+      : card.status === "Em Andamento"
+      ? "Concluído"
+      : "Pendente";
+
+  const updated = await updateTaskStatus(id, nextStatus);
+  setCards(cards.map((c) => (c.id === id ? { ...c, status: updated.status } : c)));
+};
 
   const handleEdit = async (id, newTitle, newContent) => {
-    try {
-      const updated = await updateTask(id, newTitle, newContent);
-      setCards(cards.map((c) => 
-        c.id === id 
-          ? { ...c, title: updated.title, description: updated.description }
-          : c
-      ));
-    } catch (error) {
-      console.error("Erro ao editar tarefa:", error);
-    }
+    const updated = await updateTask(id, newTitle, newContent);
+    setCards(cards.map((c) => (c.id === id ? updated : c)));
   };
 
   return (
     <ColumnContainer>
       <ColumnHeader>
         <h1>{Title}</h1>
-        <button onClick={() => setAdding(!adding)}>
-          {adding ? "Cancelar" : "Adicionar Card"}
-        </button>
       </ColumnHeader>
+
+      <AddButton onClick={() => setAdding(!adding)}>
+        {adding ? "Cancelar" : "+ Adicionar Card"}
+      </AddButton>
 
       <ColumnBody>
         {cards.map((card) => (
           <Card
             key={card.id}
-            id={card.id}  // ✅ Passa o ID
+            id={card.id}
             title={card.title}
             content={card.description}
             status={card.status}
             onDelete={() => handleDelete(card.id)}
-            onEdit={handleEdit}  // ✅ Passa a função de edição
+            onEdit={handleEdit}
             onStatusChange={() => handleStatusChange(card.id)}
           />
         ))}
@@ -116,30 +87,55 @@ export const Column = ({ Title }) => {
 };
 
 const ColumnContainer = styled.div`
-  background: #f4f4f4;
-  border-radius: 10px;
-  padding: 15px;
-  width: 300px;
+  background: #fff;
+  border-radius: 16px;
+  width: 24%;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: 0.3s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.12);
+  }
 `;
 
 const ColumnHeader = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  button {
-    background: #27ae60;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
+  justify-content: center;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 10px;
+
+  h1 {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+`;
+
+const AddButton = styled.button`
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: 0.2s;
+
+  &:hover {
+    background: #005bb5;
   }
 `;
 
 const ColumnBody = styled.div`
-  margin-top: 10px;
   flex: 1;
   overflow-y: auto;
 `;
