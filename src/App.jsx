@@ -1,4 +1,4 @@
-import { Kanban } from "./components/Columns"
+import { Kanban } from "./components/kanban/kanban"
 
 function App() {
   return (
