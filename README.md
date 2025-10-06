@@ -30,26 +30,14 @@ Um sistema de gerenciamento de tarefas no estilo Kanban, com backend em Node.js 
 ---
 
 ##  Instalação e execução
-
-
-    ```sh
     git clone [https://github.com/trigaass/MiniKanban](https://github.com/trigaass/MiniKanban)
-    ```
 
-    ```sh
     cd minikanban
-    ```
 
-    ```sh
     cd server
     npm install
-    cd ..
-    ```
+    cd 
 
-    ```sh
     npm install
-    ```
 
-    ```sh
     npm run dev
-    ```
